@@ -1,9 +1,14 @@
 import { InfiniTs } from '../InfiniTs';
 
 const test = (): void => {
-    InfiniTs.range()
-        .map((n: number): number => n * 2)
-        .drop(100)
+    const evens = InfiniTs.range().map((n: number): number => n * 2);
+
+    const odds = evens.clone().map((n: number): number => {
+        return n + 1;
+    });
+
+    evens
+        .zipLong(odds)
         .take(10)
         .forEach(console.log);
 };
