@@ -1,0 +1,13 @@
+{
+  "name": "infinits",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p .",
+    "start": "yarn build -- -w"
+  },
+  "dependencies": {
+    "typescript": "^3.4.3"
+  }
+}
