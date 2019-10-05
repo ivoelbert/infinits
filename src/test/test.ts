@@ -7,10 +7,17 @@ const test = (): void => {
         return n + 1;
     });
 
-    evens
+    const zipped = evens
         .zipLong(odds)
-        .take(10)
-        .forEach(console.log);
+        .take(20)
+
+    const firstPart = zipped.clone().take(10);
+    const secondPart = zipped.clone().drop(10);
+
+    console.log("First part:")
+    firstPart.forEach(console.log);
+    console.log("Second part:")
+    secondPart.forEach(console.log);
 };
 
 test();

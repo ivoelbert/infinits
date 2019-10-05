@@ -248,7 +248,7 @@ export class InfiniTs<T> {
         return new InfiniTs<[T, S]>(newGen, newHistory);
     };
 
-    public clone = <T>(): InfiniTs<T> => {
+    public clone = (): InfiniTs<T> => {
         const history = this.history;
 
         const cloned = history.reduce((acc: InfiniTs<any>, entry: HistoryEntry) => {
