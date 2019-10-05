@@ -36,4 +36,4 @@ const clones = (): void => {
     someMoreEvens.forEach(console.log);
 };
 
-clonse();
+clones();
