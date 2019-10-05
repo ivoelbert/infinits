@@ -36,4 +36,13 @@ const clones = (): void => {
     someMoreEvens.forEach(console.log);
 };
 
-clones();
+const tabulate = (): void => {
+    const pow2s = InfiniTs.tabulate((idx: number): number => {
+        return 2 ** idx;
+    });
+
+    pow2s.take(10).forEach(console.log);
+}
+
+tabulate();
+//clones();

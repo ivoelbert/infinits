@@ -11,6 +11,7 @@ const baseOptions = {
 };
 
 // Callbacks type definitions
+type TabulateFun<T> = (idx: number) => T;
 type ForEachFunction<T> = (elem: T) => void;
 type LimitFunction<T> = (elem: T) => boolean;
 type MapFunction<A, B> = (elem?: A, index?: number) => B;
@@ -19,9 +20,9 @@ type FilterFunction<T> = (elem: T) => boolean;
 type ReduceFunction<A, B> = (acc: A, curr: B) => A;
 
 type HistoryEntry = {
-    functionName: string,
-    arguments: any[],
-}
+    functionName: string;
+    arguments: any[];
+};
 
 // Exposed class for infinite lists
 export class InfiniTs<T> {
@@ -45,13 +46,27 @@ export class InfiniTs<T> {
 
         const newEntry: HistoryEntry = {
             functionName: 'range',
-            arguments: [{...options}]
-        }
-        const newHistory: HistoryEntry[] = [
-            newEntry
-        ];
+            arguments: [{ ...options }],
+        };
+        const newHistory: HistoryEntry[] = [newEntry];
 
         return new InfiniTs<number>(newGen, newHistory);
+    };
+
+    public static tabulate = <T>(fun: TabulateFun<T>) => {
+        const newGen = function*(): IterableIterator<T> {
+            for (let idx = 0; ; idx++) {
+                yield fun(idx);
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'tabulate',
+            arguments: [{ ...fun }],
+        };
+        const newHistory: HistoryEntry[] = [newEntry];
+
+        return new InfiniTs<T>(newGen, newHistory);
     };
 
     // EXECUTIONS
@@ -94,12 +109,9 @@ export class InfiniTs<T> {
 
         const newEntry: HistoryEntry = {
             functionName: 'until',
-            arguments: [limit]
-        }
-        const newHistory: HistoryEntry[] = [
-            ...this.history,
-            newEntry
-        ];
+            arguments: [limit],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<T>(newGen, newHistory);
     };
@@ -117,12 +129,9 @@ export class InfiniTs<T> {
 
         const newEntry: HistoryEntry = {
             functionName: 'map',
-            arguments: [fun]
-        }
-        const newHistory: HistoryEntry[] = [
-            ...this.history,
-            newEntry
-        ];
+            arguments: [fun],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<S>(newGen, newHistory);
     };
@@ -144,12 +153,9 @@ export class InfiniTs<T> {
 
         const newEntry: HistoryEntry = {
             functionName: 'take',
-            arguments: [n]
-        }
-        const newHistory: HistoryEntry[] = [
-            ...this.history,
-            newEntry
-        ];
+            arguments: [n],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<T>(newGen, newHistory);
     };
@@ -171,12 +177,9 @@ export class InfiniTs<T> {
 
         const newEntry: HistoryEntry = {
             functionName: 'drop',
-            arguments: [n]
-        }
-        const newHistory: HistoryEntry[] = [
-            ...this.history,
-            newEntry
-        ];
+            arguments: [n],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<T>(newGen, newHistory);
     };
@@ -194,12 +197,9 @@ export class InfiniTs<T> {
 
         const newEntry: HistoryEntry = {
             functionName: 'filter',
-            arguments: [fun]
-        }
-        const newHistory: HistoryEntry[] = [
-            ...this.history,
-            newEntry
-        ];
+            arguments: [fun],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<T>(newGen, newHistory);
     };
@@ -216,12 +216,9 @@ export class InfiniTs<T> {
 
         const newEntry: HistoryEntry = {
             functionName: 'zipLong',
-            arguments: [list.clone()]
-        }
-        const newHistory: HistoryEntry[] = [
-            ...this.history,
-            newEntry
-        ];
+            arguments: [list.clone()],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<[T, S]>(newGen, newHistory);
     };
@@ -238,12 +235,9 @@ export class InfiniTs<T> {
 
         const newEntry: HistoryEntry = {
             functionName: 'zipShort',
-            arguments: [list.clone()]
-        }
-        const newHistory: HistoryEntry[] = [
-            ...this.history,
-            newEntry
-        ];
+            arguments: [list.clone()],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<[T, S]>(newGen, newHistory);
     };
@@ -253,8 +247,8 @@ export class InfiniTs<T> {
 
         const cloned = history.reduce((acc: InfiniTs<any>, entry: HistoryEntry) => {
             return acc[entry.functionName](...entry.arguments);
-        }, InfiniTs) as InfiniTs<T>
+        }, InfiniTs) as InfiniTs<T>;
 
         return cloned;
-    }
+    };
 }
