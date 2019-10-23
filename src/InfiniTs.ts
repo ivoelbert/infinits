@@ -53,21 +53,37 @@ export class InfiniTs<T> {
         return new InfiniTs<number>(newGen, newHistory);
     };
 
-    public static tabulate = <T>(fun: TabulateFun<T>) => {
+    public static tabulate = <T>(fun: TabulateFun<T>, count: number = Infinity): InfiniTs<T> => {
         const newGen = function*(): IterableIterator<T> {
-            for (let idx = 0; ; idx++) {
+            for (let idx = 0; idx < count; idx++) {
                 yield fun(idx);
             }
         };
 
         const newEntry: HistoryEntry = {
             functionName: 'tabulate',
-            arguments: [{ ...fun }],
+            arguments: [fun, count],
         };
         const newHistory: HistoryEntry[] = [newEntry];
 
         return new InfiniTs<T>(newGen, newHistory);
     };
+
+    public static repeat = <T>(val: T, count: number = Infinity): InfiniTs<T> => {
+        const newGen = function*(): IterableIterator<T> {
+            for (let idx = 0; idx < count; idx++) {
+                yield val;
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'repeat',
+            arguments: [val, count],
+        };
+        const newHistory: HistoryEntry[] = [newEntry];
+
+        return new InfiniTs<T>(newGen, newHistory);
+    }
 
     /*
     *   EXECUTIONS
