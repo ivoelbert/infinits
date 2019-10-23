@@ -44,5 +44,3 @@ const tabulate = (): void => {
     pow2s.take(10).forEach(console.log);
 }
 
-tabulate();
-//clones();

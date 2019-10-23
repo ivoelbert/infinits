@@ -69,7 +69,9 @@ export class InfiniTs<T> {
         return new InfiniTs<T>(newGen, newHistory);
     };
 
-    // EXECUTIONS
+    /*
+    *   EXECUTIONS
+    */
     public exec = (): IterableIterator<T> => {
         return this.generator();
     };
@@ -93,7 +95,35 @@ export class InfiniTs<T> {
         return reducedValue;
     };
 
-    // MODIFIERS
+    public count = (): number => {
+        let count = 0;
+        for (const _value of this.exec()) {
+            count++;
+        }
+
+        return count;
+    }
+
+    public nth = (n: number): T => {
+        let passed = 0;
+        for (const value of this.exec()) {
+            if(passed === n) {
+                return value;
+            }
+
+            passed++;
+        }
+
+        // If we reach this point the list didn't have n elements, so we just return undefined.
+        return undefined;
+    }
+    /*
+    *   END EXECUTIONS
+    */
+
+    /*
+    *   MODIFIERS
+    */
     public until = (limit: LimitFunction<T>): InfiniTs<T> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
@@ -242,6 +272,32 @@ export class InfiniTs<T> {
         return new InfiniTs<[T, S]>(newGen, newHistory);
     };
 
+    public append = (list: InfiniTs<T>): InfiniTs<T> => {
+        const firstPart: IterableIterator<T> = this.generator();
+        const secondPart: IterableIterator<T> = list.exec();
+
+        const newGen = function*(): IterableIterator<T> {
+            for (const valueFst of firstPart) {
+                yield valueFst;
+            }
+            for (const valueSnd of secondPart) {
+                yield valueSnd;
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'append',
+            arguments: [list.clone()],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
+
+        return new InfiniTs<T>(newGen, newHistory);
+    }
+    /*
+    *   END MODIFIERS
+    */
+
+    // Clones generation, not actual values.
     public clone = (): InfiniTs<T> => {
         const history = this.history;
 
