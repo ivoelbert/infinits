@@ -34,6 +34,9 @@ export class InfiniTs<T> {
         this.history = history;
     }
 
+    /*
+    *   GENERATORS
+    */
     public static range = (options: rangeOptions = baseOptions): InfiniTs<number> => {
         // Default values if not available
         const { start = 0, end = Infinity, step = 1 }: rangeOptions = options;
@@ -84,6 +87,9 @@ export class InfiniTs<T> {
 
         return new InfiniTs<T>(newGen, newHistory);
     }
+    /*
+    *   END GENERATORS
+    */
 
     /*
     *   EXECUTIONS
@@ -140,6 +146,8 @@ export class InfiniTs<T> {
     /*
     *   MODIFIERS
     */
+
+    // LIMITERS
     public until = (limit: LimitFunction<T>): InfiniTs<T> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
@@ -160,26 +168,6 @@ export class InfiniTs<T> {
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<T>(newGen, newHistory);
-    };
-
-    public map = <S>(fun: MapFunction<T, S>): InfiniTs<S> => {
-        const execute: GeneratorBuilder<T> = this.generator;
-
-        const newGen = function*(): IterableIterator<S> {
-            let iteration: number = 0;
-            for (const value of execute()) {
-                yield fun(value, iteration);
-                iteration++;
-            }
-        };
-
-        const newEntry: HistoryEntry = {
-            functionName: 'map',
-            arguments: [fun],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new InfiniTs<S>(newGen, newHistory);
     };
 
     public take = (n: number): InfiniTs<T> => {
@@ -228,6 +216,27 @@ export class InfiniTs<T> {
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
         return new InfiniTs<T>(newGen, newHistory);
+    };
+
+    // TRANSFORMS
+    public map = <S>(fun: MapFunction<T, S>): InfiniTs<S> => {
+        const execute: GeneratorBuilder<T> = this.generator;
+
+        const newGen = function*(): IterableIterator<S> {
+            let iteration: number = 0;
+            for (const value of execute()) {
+                yield fun(value, iteration);
+                iteration++;
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'map',
+            arguments: [fun],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
+
+        return new InfiniTs<S>(newGen, newHistory);
     };
 
     public filter = (fun: FilterFunction<T>): InfiniTs<T> => {
