@@ -13,7 +13,13 @@ test('basic tabulate', () => {
 });
 
 test('basic repeat', () => {
-    const basicTabulate = InfiniTs.repeat(42, 5);
+    const basicRepeat = InfiniTs.repeat(42, 5);
 
-    expect(basicTabulate.toArray()).toEqual([42, 42, 42, 42, 42]);
+    expect(basicRepeat.toArray()).toEqual([42, 42, 42, 42, 42]);
+});
+
+test('enumerate', () => {
+    const enumerated = InfiniTs.repeat(42, 5).enumerate();
+
+    expect(enumerated.toArray()).toEqual([[42, 0], [42, 1], [42, 2], [42, 3], [42, 4]]);
 });

@@ -309,6 +309,26 @@ export class InfiniTs<T> {
 
         return new InfiniTs<T>(newGen, newHistory);
     }
+
+    public enumerate = (): InfiniTs<[T, number]> => {
+        const execute: GeneratorBuilder<T> = this.generator;
+
+        const newGen = function*(): IterableIterator<[T, number]> {
+            let iteration: number = 0;
+            for (const value of execute()) {
+                yield [value, iteration];
+                iteration++;
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'enumerate',
+            arguments: [],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
+
+        return new InfiniTs<[T, number]>(newGen, newHistory);
+    }
     /*
     *   END MODIFIERS
     */
