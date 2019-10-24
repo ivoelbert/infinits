@@ -6,6 +6,18 @@ test('basic range', () => {
     expect(basicRange.toArray()).toEqual([0, 1, 2, 3, 4]);
 });
 
+test('negative range', () => {
+    const basicRange = Infinits.range({ end: -5, step: -1 });
+
+    expect(basicRange.toArray()).toEqual([0, -1, -2, -3, -4]);
+});
+
+test('negative range and take', () => {
+    const basicRange = Infinits.range({ step: -1 }).take(5);
+
+    expect(basicRange.toArray()).toEqual([0, -1, -2, -3, -4]);
+});
+
 test('basic tabulate', () => {
     const basicTabulate = Infinits.tabulate((idx: number) => idx * 2, 5);
 
@@ -30,6 +42,12 @@ test('scan', () => {
     }, 0);
 
     expect(scanned.toArray()).toEqual([1, 2, 3, 4, 5]);
+});
+
+test('from', () => {
+    const fromArray = Infinits.from([1, 2, 3, 4]);
+
+    expect(fromArray.toArray()).toEqual([1, 2, 3, 4]);
 });
 
 test('loop and take', () => {

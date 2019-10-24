@@ -39,11 +39,18 @@ export class Infinits<T> {
      */
     public static range = (options: rangeOptions = baseOptions): Infinits<number> => {
         // Default values if not available
-        const { start = 0, end = Infinity, step = 1 }: rangeOptions = options;
+        const { start = 0, step = 1 }: rangeOptions = options;
+        const end = options.end !== undefined ? options.end : step > 0 ? Infinity : -Infinity;
 
         const newGen = function*(): IterableIterator<number> {
-            for (let value = start; value < end; value += step) {
-                yield value;
+            if (step > 0) {
+                for (let value = start; value < end; value += step) {
+                    yield value;
+                }
+            } else {
+                for (let value = start; value > end; value += step) {
+                    yield value;
+                }
             }
         };
 
@@ -82,6 +89,22 @@ export class Infinits<T> {
         const newEntry: HistoryEntry = {
             functionName: 'repeat',
             arguments: [val, count],
+        };
+        const newHistory: HistoryEntry[] = [newEntry];
+
+        return new Infinits<T>(newGen, newHistory);
+    };
+
+    public static from = <T>(iterator: Iterable<T>): Infinits<T> => {
+        const newGen = function*(): IterableIterator<T> {
+            for (const value of iterator) {
+                yield value;
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'from',
+            arguments: [iterator],
         };
         const newHistory: HistoryEntry[] = [newEntry];
 
@@ -181,8 +204,6 @@ export class Infinits<T> {
     /*
      *   MODIFIERS
      */
-
-    // LIMITERS
     public until = (limit: Predicate<T>): Infinits<T> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
@@ -253,7 +274,6 @@ export class Infinits<T> {
         return new Infinits<T>(newGen, newHistory);
     };
 
-    // TRANSFORMS
     public map = <S>(fun: MapFunction<T, S>): Infinits<S> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
@@ -405,11 +425,8 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'inspect',
-            arguments: [fun],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
+        // Don't clone inspections
+        const newHistory: HistoryEntry[] = [...this.history];
 
         return new Infinits<T>(newGen, newHistory);
     };
