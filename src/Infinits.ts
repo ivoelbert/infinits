@@ -13,11 +13,11 @@ const baseOptions = {
 // Callbacks type definitions
 type TabulateFun<T> = (idx: number) => T;
 type ForEachFunction<T> = (elem: T) => void;
-type LimitFunction<T> = (elem: T) => boolean;
+type Predicate<T> = (elem: T) => boolean;
 type MapFunction<A, B> = (elem?: A, index?: number) => B;
 type GeneratorBuilder<T> = () => IterableIterator<T>;
-type FilterFunction<T> = (elem: T) => boolean;
 type ReduceFunction<A, B> = (acc: A, curr: B) => A;
+type ScanFunction<A, B> = (state: A, curr: B) => A;
 
 type HistoryEntry = {
     functionName: string;
@@ -25,7 +25,7 @@ type HistoryEntry = {
 };
 
 // Exposed class for infinite lists
-export class InfiniTs<T> {
+export class Infinits<T> {
     private generator: GeneratorBuilder<T>;
     private history: HistoryEntry[];
 
@@ -35,9 +35,9 @@ export class InfiniTs<T> {
     }
 
     /*
-    *   GENERATORS
-    */
-    public static range = (options: rangeOptions = baseOptions): InfiniTs<number> => {
+     *   GENERATORS
+     */
+    public static range = (options: rangeOptions = baseOptions): Infinits<number> => {
         // Default values if not available
         const { start = 0, end = Infinity, step = 1 }: rangeOptions = options;
 
@@ -53,10 +53,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [newEntry];
 
-        return new InfiniTs<number>(newGen, newHistory);
+        return new Infinits<number>(newGen, newHistory);
     };
 
-    public static tabulate = <T>(fun: TabulateFun<T>, count: number = Infinity): InfiniTs<T> => {
+    public static tabulate = <T>(fun: TabulateFun<T>, count: number = Infinity): Infinits<T> => {
         const newGen = function*(): IterableIterator<T> {
             for (let idx = 0; idx < count; idx++) {
                 yield fun(idx);
@@ -69,10 +69,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [newEntry];
 
-        return new InfiniTs<T>(newGen, newHistory);
+        return new Infinits<T>(newGen, newHistory);
     };
 
-    public static repeat = <T>(val: T, count: number = Infinity): InfiniTs<T> => {
+    public static repeat = <T>(val: T, count: number = Infinity): Infinits<T> => {
         const newGen = function*(): IterableIterator<T> {
             for (let idx = 0; idx < count; idx++) {
                 yield val;
@@ -85,15 +85,15 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [newEntry];
 
-        return new InfiniTs<T>(newGen, newHistory);
-    }
+        return new Infinits<T>(newGen, newHistory);
+    };
     /*
-    *   END GENERATORS
-    */
+     *   END GENERATORS
+     */
 
     /*
-    *   EXECUTIONS
-    */
+     *   EXECUTIONS
+     */
     public exec = (): IterableIterator<T> => {
         return this.generator();
     };
@@ -117,19 +117,23 @@ export class InfiniTs<T> {
         return reducedValue;
     };
 
-    public count = (): number => {
+    public count = (countIf?: Predicate<T>): number => {
+        const predicate = countIf || ((_elem: T): boolean => true);
+
         let count = 0;
-        for (const _value of this.exec()) {
-            count++;
+        for (const value of this.exec()) {
+            if (predicate(value)) {
+                count++;
+            }
         }
 
         return count;
-    }
+    };
 
     public nth = (n: number): T => {
         let passed = 0;
         for (const value of this.exec()) {
-            if(passed === n) {
+            if (passed === n) {
                 return value;
             }
 
@@ -138,17 +142,48 @@ export class InfiniTs<T> {
 
         // If we reach this point the list didn't have n elements, so we just return undefined.
         return undefined;
-    }
+    };
+
+    public every = (predicate: Predicate<T>): boolean => {
+        for (const value of this.exec()) {
+            if (!predicate(value)) {
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    public some = (predicate: Predicate<T>): boolean => {
+        for (const value of this.exec()) {
+            if (predicate(value)) {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    public find = (predicate: Predicate<T>): T => {
+        for (const value of this.exec()) {
+            if (predicate(value)) {
+                return value;
+            }
+        }
+
+        // If no matches, return undefined
+        return undefined;
+    };
     /*
-    *   END EXECUTIONS
-    */
+     *   END EXECUTIONS
+     */
 
     /*
-    *   MODIFIERS
-    */
+     *   MODIFIERS
+     */
 
     // LIMITERS
-    public until = (limit: LimitFunction<T>): InfiniTs<T> => {
+    public until = (limit: Predicate<T>): Infinits<T> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
         const newGen = function*(): IterableIterator<T> {
@@ -167,10 +202,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<T>(newGen, newHistory);
+        return new Infinits<T>(newGen, newHistory);
     };
 
-    public take = (n: number): InfiniTs<T> => {
+    public take = (n: number): Infinits<T> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
         const newGen = function*(): IterableIterator<T> {
@@ -191,10 +226,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<T>(newGen, newHistory);
+        return new Infinits<T>(newGen, newHistory);
     };
 
-    public drop = (n: number): InfiniTs<T> => {
+    public drop = (n: number): Infinits<T> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
         const newGen = function*(): IterableIterator<T> {
@@ -215,11 +250,11 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<T>(newGen, newHistory);
+        return new Infinits<T>(newGen, newHistory);
     };
 
     // TRANSFORMS
-    public map = <S>(fun: MapFunction<T, S>): InfiniTs<S> => {
+    public map = <S>(fun: MapFunction<T, S>): Infinits<S> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
         const newGen = function*(): IterableIterator<S> {
@@ -236,10 +271,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<S>(newGen, newHistory);
+        return new Infinits<S>(newGen, newHistory);
     };
 
-    public filter = (fun: FilterFunction<T>): InfiniTs<T> => {
+    public filter = (fun: Predicate<T>): Infinits<T> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
         const newGen = function*(): IterableIterator<T> {
@@ -256,10 +291,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<T>(newGen, newHistory);
+        return new Infinits<T>(newGen, newHistory);
     };
 
-    public zipLong = <S>(list: InfiniTs<S>): InfiniTs<[T, S]> => {
+    public zipLong = <S>(list: Infinits<S>): Infinits<[T, S]> => {
         const iterT: IterableIterator<T> = this.generator();
         const iterS: IterableIterator<S> = list.exec();
 
@@ -275,10 +310,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<[T, S]>(newGen, newHistory);
+        return new Infinits<[T, S]>(newGen, newHistory);
     };
 
-    public zipShort = <S>(list: InfiniTs<S>): InfiniTs<[T, S]> => {
+    public zipShort = <S>(list: Infinits<S>): Infinits<[T, S]> => {
         const iterT: IterableIterator<T> = this.generator();
         const iterS: IterableIterator<S> = list.exec();
 
@@ -294,10 +329,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<[T, S]>(newGen, newHistory);
+        return new Infinits<[T, S]>(newGen, newHistory);
     };
 
-    public append = (list: InfiniTs<T>): InfiniTs<T> => {
+    public append = (list: Infinits<T>): Infinits<T> => {
         const firstPart: IterableIterator<T> = this.generator();
         const secondPart: IterableIterator<T> = list.exec();
 
@@ -316,10 +351,10 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<T>(newGen, newHistory);
-    }
+        return new Infinits<T>(newGen, newHistory);
+    };
 
-    public enumerate = (): InfiniTs<[T, number]> => {
+    public enumerate = (): Infinits<[T, number]> => {
         const execute: GeneratorBuilder<T> = this.generator;
 
         const newGen = function*(): IterableIterator<[T, number]> {
@@ -336,19 +371,80 @@ export class InfiniTs<T> {
         };
         const newHistory: HistoryEntry[] = [...this.history, newEntry];
 
-        return new InfiniTs<[T, number]>(newGen, newHistory);
-    }
+        return new Infinits<[T, number]>(newGen, newHistory);
+    };
+
+    public scan = <S>(fun: ScanFunction<S, T>, init: S): Infinits<S> => {
+        const execute: GeneratorBuilder<T> = this.generator;
+
+        const newGen = function*(): IterableIterator<S> {
+            let reducedValue: S = init;
+
+            for (const value of execute()) {
+                reducedValue = fun(reducedValue, value);
+                yield reducedValue;
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'scan',
+            arguments: [fun, init],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
+
+        return new Infinits<S>(newGen, newHistory);
+    };
+
+    public inspect = (fun: ForEachFunction<T>): Infinits<T> => {
+        const execute: GeneratorBuilder<T> = this.generator;
+
+        const newGen = function*(): IterableIterator<T> {
+            for (const value of execute()) {
+                fun(value);
+                yield value;
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'inspect',
+            arguments: [fun],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
+
+        return new Infinits<T>(newGen, newHistory);
+    };
+
+    public loop = (): Infinits<T> => {
+        const loopedList = this;
+
+        const newGen = function*(): IterableIterator<T> {
+            for (;;) {
+                const currentIterator = loopedList.clone().exec();
+                for (const value of currentIterator) {
+                    yield value;
+                }
+            }
+        };
+
+        const newEntry: HistoryEntry = {
+            functionName: 'loop',
+            arguments: [],
+        };
+        const newHistory: HistoryEntry[] = [...this.history, newEntry];
+
+        return new Infinits<T>(newGen, newHistory);
+    };
     /*
-    *   END MODIFIERS
-    */
+     *   END MODIFIERS
+     */
 
     // Clones generation, not actual values.
-    public clone = (): InfiniTs<T> => {
+    public clone = (): Infinits<T> => {
         const history = this.history;
 
-        const cloned = history.reduce((acc: InfiniTs<any>, entry: HistoryEntry) => {
+        const cloned = history.reduce((acc: Infinits<any>, entry: HistoryEntry) => {
             return acc[entry.functionName](...entry.arguments);
-        }, InfiniTs) as InfiniTs<T>;
+        }, Infinits) as Infinits<T>;
 
         return cloned;
     };
