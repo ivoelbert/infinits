@@ -12,7 +12,7 @@ const baseOptions = {
 
 // Callbacks type definitions
 type TabulateFun<T> = (idx: number) => T;
-type ForEachFunction<T> = (elem: T) => void;
+type ForEachFunction<T> = (elem: T, index?: number) => void;
 type Predicate<T> = (elem: T) => boolean;
 type MapFunction<A, B> = (elem?: A, index?: number) => B;
 type GeneratorBuilder<T> = () => IterableIterator<T>;
@@ -122,8 +122,10 @@ export class Infinits<T> {
     };
 
     public forEach = (fun: ForEachFunction<T>): void => {
+        let iter: number = 0;
         for (const value of this.exec()) {
-            fun(value);
+            fun(value, iter);
+            iter++;
         }
     };
 

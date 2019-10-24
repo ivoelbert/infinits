@@ -6,13 +6,13 @@ It's based on javascript's [Generators](https://developer.mozilla.org/en-US/docs
 
 # API
 
-The API provides two different kind of methods: [Generators](##Generators) and [Modifiers](##Modifiers)
+The API provides three different kind of methods: [Generators](##Generators), [Executions](##Executions) [Modifiers](##Modifiers)
 
 ## Generators
 
 Generators are the entry point for this library. They let you create lists in many different ways:
 
-* ### `Infinits.range`
+-   ### `Infinits.range`
 
 Lets you create a list from a range of numbers.
 
@@ -42,7 +42,7 @@ export type rangeOptions = {
 };
 ```
 
-* ### `Infinits.tabulate`
+-   ### `Infinits.tabulate`
 
 Lets you create a list from a function taking the item's index.
 
@@ -73,7 +73,7 @@ type TabulateFun<T> = (idx: number) => T;
 
 and optionally a number to limit the elements count (Infinity by default).
 
-* ### `Infinits.repeat`
+-   ### `Infinits.repeat`
 
 Lets you crate a list by repeating a value
 
@@ -92,7 +92,7 @@ const five42: Infinits<string> = Infinits.repeat(42, 5);
 
 It takes a value of any type and optionally a number to limit the elements count (Infinity by default).
 
-* ### `Infinits.from`
+-   ### `Infinits.from`
 
 Lets you crate a list from any javascript [Iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) (array, string, etc...).
 
@@ -104,4 +104,37 @@ const five42: Infinits<number> = Infinits.from([42, 42, 42, 42, 42]);
 
 // ["i", "n", "f", "i", "n", "i", "t", "s"]
 const spellMyName: Infinits<string> = Infinits.from('infinits');
+```
+
+## Executions
+
+-   ### `exec`
+
+Returns an Iterable from a List
+
+```typescript
+import { Infinits } from 'infinits';
+
+const five42: Infinits<number> = Infinits.from([42, 42, 42, 42, 42]);
+
+for (const element of five42.exec()) {
+    console.log(`The answer is ${element}`);
+}
+```
+
+-   ### `forEach`
+
+Runs a callback on each element of the array (index is also available)
+
+```typescript
+import { Infinits } from 'infinits';
+
+Infinits.from([42, 42, 42, 42, 42]).forEach((element: number) => {
+    console.log(`The answer is ${element}`);
+})
+
+// Also accepts and index
+Infinits.repeat(0, 10).forEach((element: number, index: number) => {
+    console.log(`The element at ${index} is ${element}`);
+})
 ```
