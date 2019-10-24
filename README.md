@@ -1,12 +1,12 @@
 # Infinite lists!
 
-The goal of this library is to let you can create potentially infinite lists.
+The goal of this library is to let you create potentially infinite lists.
 
 It's based on javascript's [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator), and it provides many different generation methods and modifiers.
 
 # API
 
-The API provides three different kind of methods: [Generators](##Generators), [Executions](##Executions) [Modifiers](##Modifiers)
+The API provides three different kind of methods: [Generators](#Generators), [Executions](#Executions) and [Modifiers](#Modifiers)
 
 ## Generators
 
