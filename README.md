@@ -371,11 +371,57 @@ import { Infinits } from 'infinits';
 const zeros: Infinits<[number, number]> = Infinits.repeat(0).enumerate();
 
 // Equivalent to
-const zeros2: Infinits<[number, number]> = Infinits.repeat(0)
-    .map((x: number, i: number): [number, number] => [x, i]);
+const zeros2: Infinits<[number, number]> = Infinits.repeat(0).map((x: number, i: number): [number, number] => [x, i]);
 
 // And to
-const zeros3: Infinits<[number, number]> = Infinits.repeat(0)
-    .zipShort(Infinits.range());
+const zeros3: Infinits<[number, number]> = Infinits.repeat(0).zipShort(Infinits.range());
 ```
 
+-   ### `scan`
+
+Similar to [reduce](#reduce), but returns a list of every partial result and works lazily.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// All partial sums of [0, 1, 2, ...]
+// [0, 1, 3, 6, 10, 15, 21, 28, ...]
+const sumFrom0to4: Infinits<number> = Infinits.range().scan((sum, element) => sum + element, 0);
+```
+
+-   ### `inspect`
+
+Lazily runs a callback on every item. This means the callback will be executed once the value is consumed.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// Does nothing, yet...
+const inspected: Infinits<number> = Infinits.range({ end: 3 })
+    .inspect((x: number) => console.log(`inspected ${x}`))
+    .map(x => x * 2);
+
+// This logs a lot!
+inspected.forEach((x: number) => console.log(`then logged ${x}`));
+
+/*
+*   LOGS:
+*   inspected 0
+*   then logged 0
+*   inspected 1
+*   then logged 2
+*   inspected 2
+*   then logged 4
+*/
+```
+
+-   ### `loops`
+
+Takes a list and make it circular. This means: when the list ends, start again from the begining.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [0, 1, 0, 1, 0, 1, ...]
+const onesAndZeros = Infinits.from([0, 1]).loop();
+```

@@ -120,3 +120,11 @@ test('enumerate equivalences', () => {
     expect(zeros.toArray()).toEqual(zeros2.toArray());
     expect(zeros.toArray()).toEqual(zeros3.toArray());
 });
+
+test('scan with sum', () => {
+    const scanned: Infinits<number> = Infinits.range()
+        .scan((sum, element) => sum + element, 0)
+        .take(10);
+
+    expect(scanned.toArray()).toEqual([0, 1, 3, 6, 10, 15, 21, 28, 36, 45]);
+});
