@@ -135,7 +135,7 @@ Infinits.from([42, 42, 42, 42, 42]).forEach((element: number) => {
     console.log(`The answer is ${element}`);
 });
 
-// Also accepts and index
+// Also accepts an index
 Infinits.repeat(0, 10).forEach((element: number, index: number) => {
     console.log(`The element at ${index} is ${element}`);
 });
@@ -159,8 +159,11 @@ Basically the same as javascript's [reduce](https://developer.mozilla.org/en-US/
 ```typescript
 import { Infinits } from 'infinits';
 
-// 0 + 1 + 2 + 3 + 4
+// 0 + 1 + 2 + 3 + 4 = 10
 const sumFrom0to4: number = Infinits.range({ end: 5 }).reduce((sum, element) => sum + element, 0);
+
+// -1 / 12. LOL, YOU WISH! This never ends :(
+const sumOfAllIntegers: number = Infinits.range().reduce((sum, element) => sum + element, 0);
 ```
 
 -   ### `count`
