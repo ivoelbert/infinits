@@ -415,7 +415,7 @@ inspected.forEach((x: number) => console.log(`then logged ${x}`));
 */
 ```
 
--   ### `loops`
+-   ### `loop`
 
 Takes a list and make it circular. This means: when the list ends, start again from the begining.
 
