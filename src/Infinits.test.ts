@@ -84,3 +84,9 @@ test('run two reduces', () => {
     expect(firstReduce).toBe(15);
     expect(secondReduce).toBe(10);
 });
+
+test('nth', () => {
+    const element100: number = Infinits.range().nth(100);
+
+    expect(element100).toBe(100);
+})
