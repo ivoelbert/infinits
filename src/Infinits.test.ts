@@ -63,3 +63,15 @@ test('count', () => {
 
     expect(countLessThan5).toBe(5);
 });
+
+test('reduce [0..4] with sum', () => {
+    const ten: number = Infinits.range({ end: 5 }).reduce((sum, element) => sum + element, 0);
+
+    expect(ten).toBe(10);
+});
+
+test('count less than 5', () => {
+    const lessThan5Count: number = Infinits.range({ end: 10 }).count((element: number) => element < 5);
+
+    expect(lessThan5Count).toBe(5);
+});

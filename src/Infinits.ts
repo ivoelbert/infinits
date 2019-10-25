@@ -16,7 +16,7 @@ type ForEachFunction<T> = (elem: T, index?: number) => void;
 type Predicate<T> = (elem: T) => boolean;
 type MapFunction<A, B> = (elem?: A, index?: number) => B;
 type GeneratorBuilder<T> = () => IterableIterator<T>;
-type ReduceFunction<A, B> = (acc: A, curr: B) => A;
+type ReduceFunction<A, B> = (acc: A, curr: B, index?: number) => A;
 type ScanFunction<A, B> = (state: A, curr: B) => A;
 
 type HistoryEntry = {
@@ -135,8 +135,10 @@ export class Infinits<T> {
 
     public reduce = <S>(fun: ReduceFunction<S, T>, init: S) => {
         let reducedValue: S = init;
+        let iter = 0;
         for (const value of this.exec()) {
-            reducedValue = fun(reducedValue, value);
+            reducedValue = fun(reducedValue, value, iter);
+            iter++;
         }
 
         return reducedValue;
