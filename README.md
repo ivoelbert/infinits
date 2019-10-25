@@ -1,6 +1,6 @@
 # Infinite lists!
 
-The goal of this library is to let you create potentially infinite lists.
+The goal of this library is to let you create potentially infinite lists in a memory efficient way.
 
 It's based on javascript's [Generators](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator), and it provides many different generation methods and modifiers.
 
@@ -35,7 +35,7 @@ const allNonPositive: Infinits<number> = Infinits.range({ step: -1 });
 As you see, range accepts this options (with their corresponding default)
 
 ```typescript
-export type rangeOptions = {
+export type RangeOptions = {
     start?: number; // defaults to 0
     end?: number; // defaults to Infinity if step > 0, -Infinity otherwise.
     step?: number; // defaults to 1
@@ -239,3 +239,141 @@ const gtThan1000: number = Infinits.range().find((element: number) => element > 
 // undefined
 const lessThan5Count: number = Infinits.range({ end: 10 }).find((element: number) => element > 10);
 ```
+
+## Modifiers
+
+Modifiers provide a way of transforming lists in a [lazy](https://en.wikipedia.org/wiki/Lazy_evaluation) way.
+
+All modifiers are chainable.
+
+-   ### `until`
+
+remove all elements after the first one to make a predicate true.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [0, ..., 1000]
+const upTo1000: Infinits<number> = Infinits.range().until((element: number) => element > 1000);
+```
+
+-   ### `take`
+
+Limit a list to a specific length.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [0, ..., 99]
+const take100: Infinits<number> = Infinits.range().take(100);
+```
+
+-   ### `drop`
+
+Remove the first N elements from a list.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [50, ..., 99]
+const drop50: Infinits<number> = Infinits.range({ end: 100 }).drop(50);
+```
+
+-   ### `map`
+
+Basically the same as javascript's [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map).
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [0, 2, 4, 6, 8, 10]
+const double: Infinits<number> = Infinits.range({ end: 5 }).map((x: number) => x * 2);
+
+// [0, ..., 9]
+const digits: Infinits<number> = Infinits.repeat(0, 10).map((x: number, index: number) => index);
+```
+
+-   ### `filter`
+
+Basically the same as javascript's [filter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter).
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [0, 2, 4, 6, ...]
+const evens: Infinits<number> = Infinits.range().map((x: number) => x % 2 === 0);
+```
+
+-   ### `zipLong`
+
+Takes another list and returns a list of pairs. Nth element in the new list is a pair of the Nth element of the first list and the Nth of the second.
+
+The resulting list's length will be that of the longest list. If one list is shorter than the other `undefined` will be used to fill the holes.
+
+```typescript
+import { Infinits } from 'infinits';
+
+const evens: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 0);
+const odds: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 1);
+
+// [ [0, 1], [2, 3], [4, 5], ... ]
+const zippedNumbers: Infinits<[number, number]> = evens.zipLong(odds);
+
+const to5: Infinits<number> = Infinits.range({ end: 5 });
+const to3: Infinits<number> = Infinits.range({ end: 3 });
+
+// [ [0, 0], [1, 1], [2, 2], [3, undefined], [4, undefined] ]
+const zippedWithHoles: Infinits<[number, number]> = to5.zipLong(to3);
+```
+
+-   ### `zipShort`
+
+same as [zipLong](#zipLong) but the resulting list's length will be that of the shortest list. Won't produce any holes.
+
+```typescript
+import { Infinits } from 'infinits';
+
+const evens: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 0);
+const odds: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 1);
+
+// [ [0, 1], [2, 3], [4, 5], ... ] Same as zipLong!
+const zippedNumbers: Infinits<[number, number]> = evens.zipShort(odds);
+
+const to5: Infinits<number> = Infinits.range({ end: 5 });
+const to3: Infinits<number> = Infinits.range({ end: 3 });
+
+// [ [0, 0], [1, 1], [2, 2] ]
+const zippedWithHoles: Infinits<[number, number]> = to5.zipShort(to3);
+```
+
+-   ### `append`
+
+appends a list to another one. Similar to javascript's [concat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat)
+
+```typescript
+import { Infinits } from 'infinits';
+
+const zeros: Infinits<number> = Infinits.repeat(0, 5);
+const ones: Infinits<number> = Infinits.repeat(1, 5);
+
+// [0, 0, 0, 0, 0, 1, 1, 1, 1, 1]
+const zerosAndOnes: Infinits<number> = zeros.append(ones);
+```
+
+-   ### `enumerate`
+
+Returns a list of pairs, first element of the pair is the original element, second is the index in the list.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [ [0, 0], [0, 1], [0, 2], ...]
+const zeros: Infinits<[number, number]> = Infinits.repeat(0).enumerate();
+
+// Equivalent to
+const zeros2: Infinits<[number, number]> = Infinits.repeat(0).map((x: number, i: number): [number, number] => [x, i]);
+
+// And to
+const zeros3: Infinits<[number, number]> = Infinits.repeat(0).zipShort(Infinits.range());
+```
+
