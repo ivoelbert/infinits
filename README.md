@@ -183,16 +183,16 @@ const lessThan5Count: number = Infinits.range({ end: 10 }).count((element: numbe
 
 Returns the nth element of the list. _might never finish_ if the list is infinite!
 
-Optionally takes a predicate to determine which elements to count
+Keep in mind this process is O(N)! We have to traverse the list to get to the nth element.
 
 ```typescript
 import { Infinits } from 'infinits';
 
-// 5
-const n: number = Infinits.repeat(0, 5).count();
+// 0
+const n: number = Infinits.repeat(0).nth(10);
 
-// 5
-const lessThan5Count: number = Infinits.range({ end: 10 }).count((element: number) => element < 5);
+// 100
+const lessThan5Count: number = Infinits.range().nth(100);
 ```
 
 -   ### `every`
