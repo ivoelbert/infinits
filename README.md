@@ -371,9 +371,11 @@ import { Infinits } from 'infinits';
 const zeros: Infinits<[number, number]> = Infinits.repeat(0).enumerate();
 
 // Equivalent to
-const zeros2: Infinits<[number, number]> = Infinits.repeat(0).map((x: number, i: number): [number, number] => [x, i]);
+const zeros2: Infinits<[number, number]> = Infinits.repeat(0)
+    .map((x: number, i: number): [number, number] => [x, i]);
 
 // And to
-const zeros3: Infinits<[number, number]> = Infinits.repeat(0).zipShort(Infinits.range());
+const zeros3: Infinits<[number, number]> = Infinits.repeat(0)
+    .zipShort(Infinits.range());
 ```
 
