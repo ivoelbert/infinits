@@ -27,11 +27,9 @@ type HistoryEntry = {
 // Exposed class for infinite lists
 export class Infinits<T> {
     private generator: GeneratorBuilder<T>;
-    private history: HistoryEntry[];
 
-    private constructor(gen: GeneratorBuilder<T>, history: HistoryEntry[] = []) {
+    private constructor(gen: GeneratorBuilder<T>) {
         this.generator = gen;
-        this.history = history;
     }
 
     /*
@@ -54,13 +52,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'range',
-            arguments: [{ ...options }],
-        };
-        const newHistory: HistoryEntry[] = [newEntry];
-
-        return new Infinits<number>(newGen, newHistory);
+        return new Infinits<number>(newGen);
     };
 
     public static tabulate = <T>(fun: TabulateFun<T>, count: number = Infinity): Infinits<T> => {
@@ -70,13 +62,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'tabulate',
-            arguments: [fun, count],
-        };
-        const newHistory: HistoryEntry[] = [newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
 
     public static repeat = <T>(val: T, count: number = Infinity): Infinits<T> => {
@@ -86,13 +72,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'repeat',
-            arguments: [val, count],
-        };
-        const newHistory: HistoryEntry[] = [newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
 
     public static from = <T>(iterator: Iterable<T>): Infinits<T> => {
@@ -102,13 +82,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'from',
-            arguments: [iterator],
-        };
-        const newHistory: HistoryEntry[] = [newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
     /*
      *   END GENERATORS
@@ -221,13 +195,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'until',
-            arguments: [limit],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
 
     public take = (n: number): Infinits<T> => {
@@ -245,13 +213,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'take',
-            arguments: [n],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
 
     public drop = (n: number): Infinits<T> => {
@@ -269,13 +231,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'drop',
-            arguments: [n],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
 
     public map = <S>(fun: MapFunction<T, S>): Infinits<S> => {
@@ -289,13 +245,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'map',
-            arguments: [fun],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<S>(newGen, newHistory);
+        return new Infinits<S>(newGen);
     };
 
     public filter = (fun: Predicate<T>): Infinits<T> => {
@@ -309,13 +259,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'filter',
-            arguments: [fun],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
 
     public zipLong = <S>(list: Infinits<S>): Infinits<[T, S]> => {
@@ -328,13 +272,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'zipLong',
-            arguments: [list.clone()],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<[T, S]>(newGen, newHistory);
+        return new Infinits<[T, S]>(newGen);
     };
 
     public zipShort = <S>(list: Infinits<S>): Infinits<[T, S]> => {
@@ -347,13 +285,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'zipShort',
-            arguments: [list.clone()],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<[T, S]>(newGen, newHistory);
+        return new Infinits<[T, S]>(newGen);
     };
 
     public append = (list: Infinits<T>): Infinits<T> => {
@@ -369,13 +301,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'append',
-            arguments: [list.clone()],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
 
     public enumerate = (): Infinits<[T, number]> => {
@@ -389,13 +315,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'enumerate',
-            arguments: [],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<[T, number]>(newGen, newHistory);
+        return new Infinits<[T, number]>(newGen);
     };
 
     public scan = <S>(fun: ScanFunction<S, T>, init: S): Infinits<S> => {
@@ -410,13 +330,7 @@ export class Infinits<T> {
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'scan',
-            arguments: [fun, init],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<S>(newGen, newHistory);
+        return new Infinits<S>(newGen);
     };
 
     public inspect = (fun: ForEachFunction<T>): Infinits<T> => {
@@ -429,10 +343,7 @@ export class Infinits<T> {
             }
         };
 
-        // Don't clone inspections
-        const newHistory: HistoryEntry[] = [...this.history];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
 
     public loop = (): Infinits<T> => {
@@ -440,33 +351,16 @@ export class Infinits<T> {
 
         const newGen = function*(): IterableIterator<T> {
             for (;;) {
-                const currentIterator = loopedList.clone().exec();
+                const currentIterator = loopedList.exec();
                 for (const value of currentIterator) {
                     yield value;
                 }
             }
         };
 
-        const newEntry: HistoryEntry = {
-            functionName: 'loop',
-            arguments: [],
-        };
-        const newHistory: HistoryEntry[] = [...this.history, newEntry];
-
-        return new Infinits<T>(newGen, newHistory);
+        return new Infinits<T>(newGen);
     };
     /*
      *   END MODIFIERS
      */
-
-    // Clones generation, not actual values.
-    public clone = (): Infinits<T> => {
-        const history = this.history;
-
-        const cloned = history.reduce((acc: Infinits<any>, entry: HistoryEntry) => {
-            return acc[entry.functionName](...entry.arguments);
-        }, Infinits) as Infinits<T>;
-
-        return cloned;
-    };
 }

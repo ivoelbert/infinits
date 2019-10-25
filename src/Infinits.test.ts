@@ -75,3 +75,12 @@ test('count less than 5', () => {
 
     expect(lessThan5Count).toBe(5);
 });
+
+test('run two reduces', () => {
+    const oneToFour: Infinits<number> = Infinits.range({ end: 5 });
+    const firstReduce: number = oneToFour.map(x => x + 1).reduce((sum, element) => sum + element, 0);
+    const secondReduce: number = oneToFour.reduce((sum, element) => sum + element, 0);
+
+    expect(firstReduce).toBe(15);
+    expect(secondReduce).toBe(10);
+});
