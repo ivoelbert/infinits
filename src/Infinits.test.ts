@@ -85,8 +85,38 @@ test('run two reduces', () => {
     expect(secondReduce).toBe(10);
 });
 
-test('nth', () => {
+test('infinite range 100th element', () => {
     const element100: number = Infinits.range().nth(100);
 
     expect(element100).toBe(100);
-})
+});
+
+test('drop 5 elements', () => {
+    const drop50: Infinits<number> = Infinits.range({ end: 10 }).drop(5);
+
+    expect(drop50.toArray()).toEqual([5, 6, 7, 8, 9]);
+});
+
+test('append two short lists', () => {
+    const zeros: Infinits<number> = Infinits.repeat(0, 5);
+    const ones: Infinits<number> = Infinits.repeat(1, 5);
+
+    const zerosAndOnes: Infinits<number> = zeros.append(ones);
+
+    expect(zerosAndOnes.toArray()).toEqual([0, 0, 0, 0, 0, 1, 1, 1, 1, 1]);
+});
+
+test('enumerate equivalences', () => {
+    const zeros: Infinits<[number, number]> = Infinits.repeat(0)
+        .enumerate()
+        .take(50);
+    const zeros2: Infinits<[number, number]> = Infinits.repeat(0)
+        .map((x: number, i: number): [number, number] => [x, i])
+        .take(50);
+    const zeros3: Infinits<[number, number]> = Infinits.repeat(0)
+        .zipShort(Infinits.range())
+        .take(50);
+
+    expect(zeros.toArray()).toEqual(zeros2.toArray());
+    expect(zeros.toArray()).toEqual(zeros3.toArray());
+});

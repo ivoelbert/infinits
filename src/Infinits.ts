@@ -1,4 +1,4 @@
-export type rangeOptions = {
+export type RangeOptions = {
     start?: number;
     end?: number;
     step?: number;
@@ -35,9 +35,9 @@ export class Infinits<T> {
     /*
      *   GENERATORS
      */
-    public static range = (options: rangeOptions = baseOptions): Infinits<number> => {
+    public static range = (options: RangeOptions = baseOptions): Infinits<number> => {
         // Default values if not available
-        const { start = 0, step = 1 }: rangeOptions = options;
+        const { start = 0, step = 1 }: RangeOptions = options;
         const end = options.end !== undefined ? options.end : step > 0 ? Infinity : -Infinity;
 
         const newGen = function*(): IterableIterator<number> {
