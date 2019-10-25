@@ -108,6 +108,8 @@ const spellMyName: Infinits<string> = Infinits.from('infinits');
 
 ## Executions
 
+Executions are ways of consuming a list.
+
 -   ### `exec`
 
 Returns an Iterable from a List
@@ -175,4 +177,62 @@ const n: number = Infinits.repeat(0, 5).count();
 
 // 5
 const lessThan5Count: number = Infinits.range({ end: 10 }).count((element: number) => element < 5);
+```
+
+-   ### `nth`
+
+Returns the nth element of the list. _might never finish_ if the list is infinite!
+
+Optionally takes a predicate to determine which elements to count
+
+```typescript
+import { Infinits } from 'infinits';
+
+// 5
+const n: number = Infinits.repeat(0, 5).count();
+
+// 5
+const lessThan5Count: number = Infinits.range({ end: 10 }).count((element: number) => element < 5);
+```
+
+-   ### `every`
+
+Returns true if a predicate is true for all elements in the list. _might never finish_ if the list is infinite!
+
+```typescript
+import { Infinits } from 'infinits';
+
+// true
+const allLessThan5: boolean = Infinits.repeat(0, 5).every((element: number) => element < 5);
+
+// false
+const lessThan5Count: boolean = Infinits.range({ end: 10 }).every((element: number) => element < 5);
+```
+
+-   ### `some`
+
+Returns true if a predicate is true for at least one element in the list
+
+```typescript
+import { Infinits } from 'infinits';
+
+// true
+const someIsOne: boolean = Infinits.range({ end: 5 }).some((element: number) => element === 1);
+
+// false
+const someIsGtTen: boolean = Infinits.range({ end: 10 }).some((element: number) => element > 10);
+```
+
+-   ### `find`
+
+Returns the first element that makes a predicate true, undefined if no element makes it. _might never finish_ if the list is infinite!
+
+```typescript
+import { Infinits } from 'infinits';
+
+// 1001
+const gtThan1000: number = Infinits.range().find((element: number) => element > 1000);
+
+// undefined
+const lessThan5Count: number = Infinits.range({ end: 10 }).find((element: number) => element > 10);
 ```
