@@ -124,17 +124,55 @@ for (const element of five42.exec()) {
 
 -   ### `forEach`
 
-Runs a callback on each element of the array (index is also available)
+Runs a callback on each element of the array (index is also available). _might never finish_ if the list is infinite!
 
 ```typescript
 import { Infinits } from 'infinits';
 
 Infinits.from([42, 42, 42, 42, 42]).forEach((element: number) => {
     console.log(`The answer is ${element}`);
-})
+});
 
 // Also accepts and index
 Infinits.repeat(0, 10).forEach((element: number, index: number) => {
     console.log(`The element at ${index} is ${element}`);
-})
+});
+```
+
+-   ### `toArray`
+
+Returns a good old array. _might never finish_ if the list is infinite!
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [0, 0, 0, 0, 0]
+const five42: number[] = Infinits.repeat(0, 5).toArray();
+```
+
+-   ### `reduce`
+
+Basically the same as javascript's [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce). _might never finish_ if the list is infinite!
+
+```typescript
+import { Infinits } from 'infinits';
+
+// 0 + 1 + 2 + 3 + 4
+const sumFrom0to4: number = Infinits.range({ end: 5 }).reduce((sum, element) => sum + element, 0);
+```
+
+-   ### `count`
+
+Returns the number of elements in a list. _might never finish_ if the list is infinite!
+
+Optionally takes a predicate to determine which elements to count
+
+```typescript
+import { Infinits } from 'infinits';
+
+// 5
+const n: number = Infinits.repeat(0, 5).count();
+
+// 5
+const lessThan5Count: number = Infinits.range({ end: 10 }).count((element: number) => element < 5);
 ```
