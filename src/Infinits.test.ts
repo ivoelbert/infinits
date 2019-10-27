@@ -128,3 +128,9 @@ test('scan with sum', () => {
 
     expect(scanned.toArray()).toEqual([0, 1, 3, 6, 10, 15, 21, 28, 36, 45]);
 });
+
+test('count evens from 0 to 9', () => {
+    const evensCount: number = Infinits.range({ end: 10 }).count((n: number) => n % 2 === 0);
+
+    expect(evensCount).toBe(5);
+});
