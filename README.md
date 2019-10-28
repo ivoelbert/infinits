@@ -306,9 +306,9 @@ const evens: Infinits<number> = Infinits.range().map((x: number) => x % 2 === 0)
 
 -   ### `zipLong`
 
-Takes another list and returns a list of pairs. Nth element in the new list is a pair of the Nth element of the first list and the Nth of the second.
+Takes any number of lists and returns a list of tuples. Nth element in the new list is a tuple made from the Nth element each list.
 
-The resulting list's length will be that of the longest list. If one list is shorter than the other `undefined` will be used to fill the holes.
+The resulting list's length will be that of the longest list. `undefined` will be used to fill the holes.
 
 ```typescript
 import { Infinits } from 'infinits';
@@ -317,13 +317,20 @@ const evens: Infinits<number> = Infinits.range().filter((x: number) => x % 2 ===
 const odds: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 1);
 
 // [ [0, 1], [2, 3], [4, 5], ... ]
-const zippedNumbers: Infinits<[number, number]> = evens.zipLong(odds);
+const zippedNumbers = evens.zipLong(odds);
 
 const to5: Infinits<number> = Infinits.range({ end: 5 });
 const to3: Infinits<number> = Infinits.range({ end: 3 });
 
 // [ [0, 0], [1, 1], [2, 2], [3, undefined], [4, undefined] ]
-const zippedWithHoles: Infinits<[number, number]> = to5.zipLong(to3);
+const zippedWithHoles = to5.zipLong(to3);
+
+const mult2: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 0);
+const mult3: Infinits<number> = Infinits.range().filter((x: number) => x % 3 === 0);
+const mult5: Infinits<number> = Infinits.range().filter((x: number) => x % 5 === 0);
+
+// [ [0, 0, 0], [2, 3, 5], [4, 6, 10], [6, 9, 15], ...]
+const multipleZip = mult2.zipLong(mult3, mult5);
 ```
 
 -   ### `zipShort`
@@ -337,13 +344,20 @@ const evens: Infinits<number> = Infinits.range().filter((x: number) => x % 2 ===
 const odds: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 1);
 
 // [ [0, 1], [2, 3], [4, 5], ... ] Same as zipLong!
-const zippedNumbers: Infinits<[number, number]> = evens.zipShort(odds);
+const zippedNumbers = evens.zipShort(odds);
 
 const to5: Infinits<number> = Infinits.range({ end: 5 });
 const to3: Infinits<number> = Infinits.range({ end: 3 });
 
 // [ [0, 0], [1, 1], [2, 2] ]
-const zippedWithHoles: Infinits<[number, number]> = to5.zipShort(to3);
+const zippedWithHoles = to5.zipShort(to3);
+
+const mult2: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 0);
+const mult3: Infinits<number> = Infinits.range().filter((x: number) => x % 3 === 0);
+const mult5: Infinits<number> = Infinits.range().filter((x: number) => x % 5 === 0);
+
+// [ [0, 0, 0], [2, 3, 5], [4, 6, 10], [6, 9, 15], ...]
+const multipleZip = mult2.zipLong(mult3, mult5);
 ```
 
 -   ### `append`
@@ -405,14 +419,14 @@ const inspected: Infinits<number> = Infinits.range({ end: 3 })
 inspected.forEach((x: number) => console.log(`then logged ${x}`));
 
 /*
-*   LOGS:
-*   inspected 0
-*   then logged 0
-*   inspected 1
-*   then logged 2
-*   inspected 2
-*   then logged 4
-*/
+ *   LOGS:
+ *   inspected 0
+ *   then logged 0
+ *   inspected 1
+ *   then logged 2
+ *   inspected 2
+ *   then logged 4
+ */
 ```
 
 -   ### `loop`
