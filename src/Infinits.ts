@@ -19,11 +19,6 @@ type GeneratorBuilder<T> = () => IterableIterator<T>;
 type ReduceFunction<A, B> = (acc: A, curr: B, index?: number) => A;
 type ScanFunction<A, B> = (state: A, curr: B) => A;
 
-type HistoryEntry = {
-    functionName: string;
-    arguments: any[];
-};
-
 // Exposed class for infinite lists
 export class Infinits<T> {
     private generator: GeneratorBuilder<T>;
@@ -262,30 +257,40 @@ export class Infinits<T> {
         return new Infinits<T>(newGen);
     };
 
-    public zipLong = <S>(list: Infinits<S>): Infinits<[T, S]> => {
-        const iterT: IterableIterator<T> = this.generator();
-        const iterS: IterableIterator<S> = list.exec();
+    // Typescript doesn't have variadic kinds yet, so any[] is needed :(
+    public zipLong = (...lists: Infinits<any>[]): Infinits<any[]> => {
+        const iterT: IterableIterator<T> = this.exec();
+        const iters: IterableIterator<any>[] = lists.map((list: Infinits<any>) => list.exec());
 
-        const newGen = function*(): IterableIterator<[T, S]> {
-            for (let iT = iterT.next(), iS = iterS.next(); !iT.done || !iS.done; iT = iterT.next(), iS = iterS.next()) {
-                yield [iT.value, iS.value];
+        const newGen = function*(): IterableIterator<any> {
+            for (
+                let values = [iterT.next(), ...iters.map(iter => iter.next())];
+                values.some(val => !val.done);
+                values = [iterT.next(), ...iters.map(iter => iter.next())]
+            ) {
+                yield values.map(val => val.value);
             }
         };
 
-        return new Infinits<[T, S]>(newGen);
+        return new Infinits<any[]>(newGen);
     };
 
-    public zipShort = <S>(list: Infinits<S>): Infinits<[T, S]> => {
-        const iterT: IterableIterator<T> = this.generator();
-        const iterS: IterableIterator<S> = list.exec();
+    // Typescript doesn't have variadic kinds yet, so any[] is needed :(
+    public zipShort = (...lists: Infinits<any>[]): Infinits<any[]> => {
+        const iterT: IterableIterator<T> = this.exec();
+        const iters: IterableIterator<any>[] = lists.map((list: Infinits<any>) => list.exec());
 
-        const newGen = function*(): IterableIterator<[T, S]> {
-            for (let iT = iterT.next(), iS = iterS.next(); !iT.done && !iS.done; iT = iterT.next(), iS = iterS.next()) {
-                yield [iT.value, iS.value];
+        const newGen = function*(): IterableIterator<any> {
+            for (
+                let values = [iterT.next(), ...iters.map(iter => iter.next())];
+                values.every(val => !val.done);
+                values = [iterT.next(), ...iters.map(iter => iter.next())]
+            ) {
+                yield values.map(val => val.value);
             }
         };
 
-        return new Infinits<[T, S]>(newGen);
+        return new Infinits<any[]>(newGen);
     };
 
     public append = (list: Infinits<T>): Infinits<T> => {

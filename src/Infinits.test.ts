@@ -115,7 +115,7 @@ test('enumerate equivalences', () => {
         .take(50);
     const zeros3: Infinits<[number, number]> = Infinits.repeat(0)
         .zipShort(Infinits.range())
-        .take(50);
+        .take(50) as Infinits<[number, number]>;
 
     expect(zeros.toArray()).toEqual(zeros2.toArray());
     expect(zeros.toArray()).toEqual(zeros3.toArray());
@@ -133,4 +133,36 @@ test('count evens from 0 to 9', () => {
     const evensCount: number = Infinits.range({ end: 10 }).count((n: number) => n % 2 === 0);
 
     expect(evensCount).toBe(5);
+});
+
+test('zipLong multiple zip', () => {
+    const three0 = Infinits.range()
+        .filter((n: number) => n % 3 === 0)
+        .take(3);
+    const three1 = Infinits.range()
+        .filter((n: number) => n % 3 === 1)
+        .take(3);
+    const three2 = Infinits.range()
+        .filter((n: number) => n % 3 === 2)
+        .take(4);
+
+    const first3 = three0.zipLong(three1, three2);
+
+    expect(first3.toArray()).toEqual([[0, 1, 2], [3, 4, 5], [6, 7, 8], [undefined, undefined, 11]]);
+});
+
+test('zipShort multiple zip', () => {
+    const three0 = Infinits.range()
+        .filter((n: number) => n % 3 === 0)
+        .take(3);
+    const three1 = Infinits.range()
+        .filter((n: number) => n % 3 === 1)
+        .take(3);
+    const three2 = Infinits.range()
+        .filter((n: number) => n % 3 === 2)
+        .take(4);
+
+    const first3 = three0.zipShort(three1, three2);
+
+    expect(first3.toArray()).toEqual([[0, 1, 2], [3, 4, 5], [6, 7, 8]]);
 });
