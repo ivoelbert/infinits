@@ -257,7 +257,8 @@ export class Infinits<T> {
         return new Infinits<T>(newGen);
     };
 
-    // Typescript doesn't have variadic kinds yet, so any[] is needed :(
+    // YES! I know this type is weird AF, but typescript has a really poor support for variadic kinds.
+    // This workaround seems good enough, inference works fine, errors are clear.
     static zipLong = <TS extends Infinits<any>[]>(...lists: TS): Infinits<{ [K in keyof TS]: TS[K] extends Infinits<infer R> ? R : never }> => {
         const iters: IterableIterator<any>[] = lists.map((list: Infinits<any>) => list.exec());
 
@@ -270,7 +271,8 @@ export class Infinits<T> {
         return new Infinits<any>(newGen);
     };
 
-    // Typescript doesn't have variadic kinds yet, so any[] is needed :(
+    // YES! I know this type is weird AF, but typescript has a really poor support for variadic kinds.
+    // This workaround seems good enough, inference works fine, errors are clear.
     static zipShort = <TS extends Infinits<any>[]>(...lists: TS): Infinits<{ [K in keyof TS]: TS[K] extends Infinits<infer R> ? R : never }> => {
         const iters: IterableIterator<any>[] = lists.map((list: Infinits<any>) => list.exec());
 
