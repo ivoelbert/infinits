@@ -1,17 +1,17 @@
 {
   "name": "infinits",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/infinits.js",
   "license": "MIT",
+  "types": "dist/infinits.d.ts",
   "scripts": {
     "build": "tsc -p .",
     "start": "yarn build -- -w",
+    "prepublish": "tsc -p .",
     "test": "jest"
   },
-  "dependencies": {
-    "typescript": "^3.4.3"
-  },
   "devDependencies": {
+    "typescript": "^3.4.3",
     "@types/jest": "^24.0.19",
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0"

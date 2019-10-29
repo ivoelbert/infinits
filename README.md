@@ -439,3 +439,7 @@ import { Infinits } from 'infinits';
 // [0, 1, 0, 1, 0, 1, ...]
 const onesAndZeros = Infinits.from([0, 1]).loop();
 ```
+
+# TODO:
+
+Improve test coverage, please :(
