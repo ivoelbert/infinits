@@ -4,6 +4,8 @@
   "main": "dist/infinits.js",
   "license": "MIT",
   "types": "dist/infinits.d.ts",
+  "author": "ivoelbert",
+  "repository": "https://github.com/ivoelbert/infinits",
   "scripts": {
     "build": "tsc -p .",
     "start": "yarn build -- -w",
