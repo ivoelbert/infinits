@@ -1,9 +1,9 @@
 {
   "name": "infinits",
-  "version": "0.4.2",
-  "main": "dist/infinits.js",
+  "version": "0.4.4",
+  "main": "dist/Infinits.js",
   "license": "MIT",
-  "types": "dist/infinits.d.ts",
+  "types": "dist/Infinits.d.ts",
   "author": "ivoelbert",
   "repository": "https://github.com/ivoelbert/infinits",
   "scripts": {
@@ -13,9 +13,9 @@
     "test": "jest"
   },
   "devDependencies": {
-    "typescript": "^3.4.3",
-    "@types/jest": "^24.0.19",
+    "@types/jest": "^24.0.20",
     "jest": "^24.9.0",
-    "ts-jest": "^24.1.0"
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.4"
   }
 }
