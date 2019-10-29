@@ -258,39 +258,29 @@ export class Infinits<T> {
     };
 
     // Typescript doesn't have variadic kinds yet, so any[] is needed :(
-    public zipLong = (...lists: Infinits<any>[]): Infinits<any[]> => {
-        const iterT: IterableIterator<T> = this.exec();
+    static zipLong = <TS extends Infinits<any>[]>(...lists: TS): Infinits<{ [K in keyof TS]: TS[K] extends Infinits<infer R> ? R : never }> => {
         const iters: IterableIterator<any>[] = lists.map((list: Infinits<any>) => list.exec());
 
         const newGen = function*(): IterableIterator<any> {
-            for (
-                let values = [iterT.next(), ...iters.map(iter => iter.next())];
-                values.some(val => !val.done);
-                values = [iterT.next(), ...iters.map(iter => iter.next())]
-            ) {
+            for (let values = iters.map(iter => iter.next()); values.some(val => !val.done); values = iters.map(iter => iter.next())) {
                 yield values.map(val => val.value);
             }
         };
 
-        return new Infinits<any[]>(newGen);
+        return new Infinits<any>(newGen);
     };
 
     // Typescript doesn't have variadic kinds yet, so any[] is needed :(
-    public zipShort = (...lists: Infinits<any>[]): Infinits<any[]> => {
-        const iterT: IterableIterator<T> = this.exec();
+    static zipShort = <TS extends Infinits<any>[]>(...lists: TS): Infinits<{ [K in keyof TS]: TS[K] extends Infinits<infer R> ? R : never }> => {
         const iters: IterableIterator<any>[] = lists.map((list: Infinits<any>) => list.exec());
 
         const newGen = function*(): IterableIterator<any> {
-            for (
-                let values = [iterT.next(), ...iters.map(iter => iter.next())];
-                values.every(val => !val.done);
-                values = [iterT.next(), ...iters.map(iter => iter.next())]
-            ) {
+            for (let values = iters.map(iter => iter.next()); values.every(val => !val.done); values = iters.map(iter => iter.next())) {
                 yield values.map(val => val.value);
             }
         };
 
-        return new Infinits<any[]>(newGen);
+        return new Infinits<any>(newGen);
     };
 
     public append = (list: Infinits<T>): Infinits<T> => {

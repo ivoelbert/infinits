@@ -113,9 +113,7 @@ test('enumerate equivalences', () => {
     const zeros2: Infinits<[number, number]> = Infinits.repeat(0)
         .map((x: number, i: number): [number, number] => [x, i])
         .take(50);
-    const zeros3: Infinits<[number, number]> = Infinits.repeat(0)
-        .zipShort(Infinits.range())
-        .take(50) as Infinits<[number, number]>;
+    const zeros3: Infinits<[number, number]> = Infinits.zipShort(Infinits.repeat(0), Infinits.range()).take(50);
 
     expect(zeros.toArray()).toEqual(zeros2.toArray());
     expect(zeros.toArray()).toEqual(zeros3.toArray());
@@ -145,10 +143,11 @@ test('zipLong multiple zip', () => {
     const three2 = Infinits.range()
         .filter((n: number) => n % 3 === 2)
         .take(4);
+    const someWords = Infinits.repeat('yes').take(4);
 
-    const first3 = three0.zipLong(three1, three2);
+    const first3 = Infinits.zipLong(three0, three1, three2, someWords);
 
-    expect(first3.toArray()).toEqual([[0, 1, 2], [3, 4, 5], [6, 7, 8], [undefined, undefined, 11]]);
+    expect(first3.toArray()).toEqual([[0, 1, 2, 'yes'], [3, 4, 5, 'yes'], [6, 7, 8, 'yes'], [undefined, undefined, 11, 'yes']]);
 });
 
 test('zipShort multiple zip', () => {
@@ -161,8 +160,9 @@ test('zipShort multiple zip', () => {
     const three2 = Infinits.range()
         .filter((n: number) => n % 3 === 2)
         .take(4);
+    const someWords = Infinits.repeat('yes').take(4);
 
-    const first3 = three0.zipShort(three1, three2);
+    const first3 = Infinits.zipShort(three0, three1, three2, someWords);
 
-    expect(first3.toArray()).toEqual([[0, 1, 2], [3, 4, 5], [6, 7, 8]]);
+    expect(first3.toArray()).toEqual([[0, 1, 2, 'yes'], [3, 4, 5, 'yes'], [6, 7, 8, 'yes']]);
 });
