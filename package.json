@@ -1,13 +1,13 @@
 {
   "name": "infinits",
-  "version": "1.0.0",
+  "version": "0.4.2",
   "main": "dist/infinits.js",
   "license": "MIT",
   "types": "dist/infinits.d.ts",
   "scripts": {
     "build": "tsc -p .",
     "start": "yarn build -- -w",
-    "prepublish": "tsc -p .",
+    "prepare": "tsc -p .",
     "test": "jest"
   },
   "devDependencies": {
