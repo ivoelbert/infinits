@@ -304,7 +304,7 @@ import { Infinits } from 'infinits';
 const evens: Infinits<number> = Infinits.range().map((x: number) => x % 2 === 0);
 ```
 
--   ### `Infinits.zipLong`
+-   ### `Infinits.zipLong` (static)
 
 Takes any number of lists and returns a list of tuples. Nth element in the new list is a tuple made from the Nth element of each list.
 
@@ -333,7 +333,7 @@ const mult5: Infinits<number> = Infinits.range().filter((x: number) => x % 5 ===
 const multipleZip = Infinits.zipLong(mult2, mult3, mult5);
 ```
 
--   ### `Infinits.zipShort`
+-   ### `Infinits.zipShort` (static)
 
 same as [zipLong](#zipLong) but the resulting list's length will be that of the shortest list. Won't produce any holes.
 
