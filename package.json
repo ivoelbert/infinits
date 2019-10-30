@@ -6,6 +6,10 @@
   "types": "dist/Infinits.d.ts",
   "author": "ivoelbert",
   "repository": "https://github.com/ivoelbert/infinits",
+  "keywords": [
+    "infinite list",
+    "generator"
+  ],
   "scripts": {
     "build": "tsc -p .",
     "start": "yarn build -- -w",
@@ -16,6 +20,6 @@
     "@types/jest": "^24.0.20",
     "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.7.1-rc"
   }
 }

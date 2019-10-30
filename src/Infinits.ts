@@ -19,6 +19,25 @@ type GeneratorBuilder<T> = () => IterableIterator<T>;
 type ReduceFunction<A, B> = (acc: A, curr: B, index?: number) => A;
 type ScanFunction<A, B> = (state: A, curr: B) => A;
 
+/*
+*   This makes me puke. Typescript doesn't fully support recursive types,
+*   So we can't do something like
+*
+*   type BaseInfinits<T> = T extends Infinits<infer R> ? BaseInfinits<R> : T;
+*
+*   We have to settle for this "finite recursion" crap. Depth can't go over 10 :(
+*/
+type BaseInfinits<T> = T extends Infinits<infer R> ? BI1<R> : T;
+type BI1<T> = T extends Infinits<infer R> ? BI2<R> : T;
+type BI2<T> = T extends Infinits<infer R> ? BI3<R> : T;
+type BI3<T> = T extends Infinits<infer R> ? BI4<R> : T;
+type BI4<T> = T extends Infinits<infer R> ? BI5<R> : T;
+type BI5<T> = T extends Infinits<infer R> ? BI6<R> : T;
+type BI6<T> = T extends Infinits<infer R> ? BI7<R> : T;
+type BI7<T> = T extends Infinits<infer R> ? BI8<R> : T;
+type BI8<T> = T extends Infinits<infer R> ? BI9<R> : T;
+type BI9<T> = T;
+
 // Exposed class for infinite lists
 export class Infinits<T> {
     private generator: GeneratorBuilder<T>;
@@ -306,17 +325,31 @@ export class Infinits<T> {
         const newGen = function*(): IterableIterator<any> {
             for (const value of execute()) {
                 if (value instanceof Infinits) {
-                    for (const deepVal of value.exec()) {
-                        yield deepVal;
-                    }
+                    yield* value.exec();
                 } else {
                     yield value;
                 }
             }
         };
 
-        return new Infinits<any>(newGen) as any;
+        return new Infinits<any>(newGen);
     };
+
+    public deepFlatten = (): Infinits<BaseInfinits<T>> => {
+        const execute = this.generator;
+
+        const newGen = function*(): IterableIterator<any> {
+            for (const value of execute()) {
+                if (value instanceof Infinits) {
+                    yield* value.deepFlatten().exec();
+                } else {
+                    yield value;
+                }
+            }
+        };
+
+        return new Infinits<any>(newGen);
+    }
 
     public append = (list: Infinits<T>): Infinits<T> => {
         const firstPart: IterableIterator<T> = this.generator();

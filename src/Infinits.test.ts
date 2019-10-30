@@ -184,7 +184,7 @@ test('find index', () => {
 test('list of lists', () => {
     const deepList = Infinits.repeat(Infinits.from([0, 1]), 5);
     expect(deepList.map(list => list.toArray()).toArray()).toEqual([[0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]);
-})
+});
 
 test('flatten deep list', () => {
     // Flatten a list of lists
@@ -195,4 +195,14 @@ test('flatten deep list', () => {
     // Flatten a shallow list (x => x)
     const shallowList = Infinits.range({ end: 5 });
     expect(shallowList.flatten().toArray()).toEqual([0, 1, 2, 3, 4]);
+});
+
+test('deepFlatten very deep list', () => {
+    const deepest = Infinits.from([0, 1]);
+    const deepList = Infinits.repeat(Infinits.repeat(Infinits.repeat(Infinits.repeat(deepest, 2), 2), 2), 2);
+
+    const deepFlattened: Infinits<number> = deepList.deepFlatten();
+    const hopefullyWeGet: Infinits<number> = Infinits.tabulate(x => x % 2, 32);
+
+    expect(deepFlattened.toArray()).toEqual(hopefullyWeGet.toArray());
 });

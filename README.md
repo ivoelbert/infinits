@@ -376,19 +376,45 @@ const multipleZip = Infinits.zipLong(mult2, mult3, mult5);
 
 ### `flatten`
 
-Similar to javascript's [flat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat), but only depth 1 (for now!).
+Similar to javascript's [flat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat), but only depth 1.
 
 If the list isn't a list of lists, it does nothing.
 
 ```typescript
 // [[0, 1], [0, 1], [0, 1], ...]
-const deepList: Infinits<Infinits<number>> = Infinits.repeat(Infinits.from([0, 1]), 5);
+const deepList: Infinits<Infinits<number>> = Infinits.repeat(Infinits.from([0, 1]));
 
 // [0, 1, 0, 1, 0, 1, ...]
 const shallowList: Infinits<number> = deepList.flatten();
 
 // [0, 1, 0, 1, 0, 1, ...]
 const flattenAgain: Infinits<number> = shallowList.flatten();
+```
+
+### `deepFlatten`
+
+Similar to javascript's [flat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat), but Infinite depth.
+
+Type inference only works until the 10th level cause Typescript doesn't support recursive types :(.
+
+```typescript
+// [[0, 1], [0, 1]]
+const deepList = Infinits.repeat(Infinits.from([0, 1]), 2);
+
+// [[[0, 1], [0, 1]], [[0, 1], [0, 1]]]
+const deeperList = Infinits.repeat(deepList, 2);
+
+// [[[[0, 1], [0, 1]], [[0, 1], [0, 1]]], [[[0, 1], [0, 1]], [[0, 1], [0, 1]]]]
+const reallyDeepList = Infinits.repeat(deeperList, 2);
+
+// [0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1]
+const shallowList: Infinits<number> = deepList.deepFlatten();
+
+// ... After nesting more and more lists, more than 10 times ...
+const deepestListEver = Infinits.repeat(absurdlyDeepList, 2);
+
+// You'll have to use `as Infinits<YourBaseType>`
+const badInferenceShallow: Infinits<number> = deepestListEver.deepFlatten() as Infinits<number>;
 ```
 
 ### `append`
