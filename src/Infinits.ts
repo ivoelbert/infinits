@@ -170,6 +170,21 @@ export class Infinits<T> {
         // If no matches, return undefined
         return undefined;
     };
+
+    public findIndex = (predicate: Predicate<T>): number => {
+        let idx: number = 0;
+        for (const value of this.exec()) {
+            if (predicate(value)) {
+                return idx;
+            } else {
+                idx++;
+            }
+        }
+
+        // If no matches, return -1
+        return -1;
+    };
+
     /*
      *   END EXECUTIONS
      */
@@ -283,6 +298,24 @@ export class Infinits<T> {
         };
 
         return new Infinits<any>(newGen);
+    };
+
+    public flatten = (): Infinits<T extends Infinits<infer R> ? R : T> => {
+        const execute = this.generator;
+
+        const newGen = function*(): IterableIterator<any> {
+            for (const value of execute()) {
+                if (value instanceof Infinits) {
+                    for (const deepVal of value.exec()) {
+                        yield deepVal;
+                    }
+                } else {
+                    yield value;
+                }
+            }
+        };
+
+        return new Infinits<any>(newGen) as any;
     };
 
     public append = (list: Infinits<T>): Infinits<T> => {

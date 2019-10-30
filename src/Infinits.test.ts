@@ -166,3 +166,33 @@ test('zipShort multiple zip', () => {
 
     expect(first3.toArray()).toEqual([[0, 1, 2, 'yes'], [3, 4, 5, 'yes'], [6, 7, 8, 'yes']]);
 });
+
+test('find element', () => {
+    const pow2 = Infinits.tabulate((idx: number) => 2 ** idx);
+    const gt1000 = pow2.find((n: number) => n > 1000);
+
+    expect(gt1000).toBe(1024);
+});
+
+test('find index', () => {
+    const pow2 = Infinits.tabulate((idx: number) => 2 ** idx);
+    const gt1000idx = pow2.findIndex((n: number) => n > 1000);
+
+    expect(gt1000idx).toBe(10);
+});
+
+test('list of lists', () => {
+    const deepList = Infinits.repeat(Infinits.from([0, 1]), 5);
+    expect(deepList.map(list => list.toArray()).toArray()).toEqual([[0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]);
+})
+
+test('flatten deep list', () => {
+    // Flatten a list of lists
+    const deepList = Infinits.repeat(Infinits.from([0, 1]), 5);
+    const flattened = deepList.flatten();
+    expect(flattened.toArray()).toEqual([0, 1, 0, 1, 0, 1, 0, 1, 0, 1]);
+
+    // Flatten a shallow list (x => x)
+    const shallowList = Infinits.range({ end: 5 });
+    expect(shallowList.flatten().toArray()).toEqual([0, 1, 2, 3, 4]);
+});
