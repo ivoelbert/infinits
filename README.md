@@ -6,13 +6,13 @@ It's based on javascript's [Generators](https://developer.mozilla.org/en-US/docs
 
 # API
 
-The API provides three different kind of methods: [Generators](#Generators), [Executions](#Executions) and [Modifiers](#Modifiers)
+The API provides three different kind of methods: [Generators](#generators), [Executions](#executions) and [Modifiers](#modifiers)
 
 ## Generators
 
 Generators are the entry point for this library. They let you create lists in many different ways:
 
--   ### `Infinits.range`
+### `Infinits.range`
 
 Lets you create a list from a range of numbers.
 
@@ -42,7 +42,7 @@ export type RangeOptions = {
 };
 ```
 
--   ### `Infinits.tabulate`
+### `Infinits.tabulate`
 
 Lets you create a list from a function taking the item's index.
 
@@ -73,7 +73,7 @@ type TabulateFun<T> = (idx: number) => T;
 
 and optionally a number to limit the elements count (Infinity by default).
 
--   ### `Infinits.repeat`
+### `Infinits.repeat`
 
 Lets you crate a list by repeating a value
 
@@ -92,7 +92,7 @@ const five42: Infinits<string> = Infinits.repeat(42, 5);
 
 It takes a value of any type and optionally a number to limit the elements count (Infinity by default).
 
--   ### `Infinits.from`
+### `Infinits.from`
 
 Lets you crate a list from any javascript [Iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) (array, string, etc...).
 
@@ -108,9 +108,9 @@ const spellMyName: Infinits<string> = Infinits.from('infinits');
 
 ## Executions
 
-Executions are ways of consuming a list.
+Executions are ways of consuming a list. This might never end if a list is actually infinite, so be careful what you do!
 
--   ### `exec`
+### `exec`
 
 Returns an Iterable from a List
 
@@ -124,9 +124,9 @@ for (const element of five42.exec()) {
 }
 ```
 
--   ### `forEach`
+### `forEach`
 
-Runs a callback on each element of the array (index is also available). _might never finish_ if the list is infinite!
+Runs a callback on each element of the array (index is also available).
 
 ```typescript
 import { Infinits } from 'infinits';
@@ -141,9 +141,9 @@ Infinits.repeat(0, 10).forEach((element: number, index: number) => {
 });
 ```
 
--   ### `toArray`
+### `toArray`
 
-Returns a good old array. _might never finish_ if the list is infinite!
+Returns a good old array.
 
 ```typescript
 import { Infinits } from 'infinits';
@@ -152,9 +152,9 @@ import { Infinits } from 'infinits';
 const five42: number[] = Infinits.repeat(0, 5).toArray();
 ```
 
--   ### `reduce`
+### `reduce`
 
-Basically the same as javascript's [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce). _might never finish_ if the list is infinite!
+Basically the same as javascript's [reduce](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/reduce).
 
 ```typescript
 import { Infinits } from 'infinits';
@@ -166,9 +166,9 @@ const sumFrom0to4: number = Infinits.range({ end: 5 }).reduce((sum, element) => 
 const sumOfAllIntegers: number = Infinits.range().reduce((sum, element) => sum + element, 0);
 ```
 
--   ### `count`
+### `count`
 
-Returns the number of elements in a list. _might never finish_ if the list is infinite!
+Returns the number of elements in a list.
 
 Optionally takes a predicate to determine which elements to count
 
@@ -182,9 +182,9 @@ const n: number = Infinits.repeat(0, 5).count();
 const lessThan5Count: number = Infinits.range({ end: 10 }).count((element: number) => element < 5);
 ```
 
--   ### `nth`
+### `nth`
 
-Returns the nth element of the list. _might never finish_ if the list is infinite!
+Returns the nth element of the list.
 
 Keep in mind this process is O(N)! We have to traverse the list to get to the nth element.
 
@@ -198,9 +198,9 @@ const n: number = Infinits.repeat(0).nth(10);
 const lessThan5Count: number = Infinits.range().nth(100);
 ```
 
--   ### `every`
+### `every`
 
-Returns true if a predicate is true for all elements in the list. _might never finish_ if the list is infinite!
+Returns true if a predicate is true for all elements in the list.
 
 ```typescript
 import { Infinits } from 'infinits';
@@ -212,7 +212,7 @@ const allLessThan5: boolean = Infinits.repeat(0, 5).every((element: number) => e
 const lessThan5Count: boolean = Infinits.range({ end: 10 }).every((element: number) => element < 5);
 ```
 
--   ### `some`
+### `some`
 
 Returns true if a predicate is true for at least one element in the list
 
@@ -226,9 +226,9 @@ const someIsOne: boolean = Infinits.range({ end: 5 }).some((element: number) => 
 const someIsGtTen: boolean = Infinits.range({ end: 10 }).some((element: number) => element > 10);
 ```
 
--   ### `find`
+### `find`
 
-Returns the first element that makes a predicate true, undefined if no element makes it. _might never finish_ if the list is infinite!
+Returns the first element that makes a predicate true, undefined if no element makes it.
 
 ```typescript
 import { Infinits } from 'infinits';
@@ -240,13 +240,27 @@ const gtThan1000: number = Infinits.range().find((element: number) => element > 
 const lessThan5Count: number = Infinits.range({ end: 10 }).find((element: number) => element > 10);
 ```
 
+### `findIndex`
+
+Returns the index of the first element that makes a predicate true, -1 if no element makes it.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// 1001
+const gtThan1000: number = Infinits.range().findIndex((element: number) => element > 1000);
+
+// -1
+const lessThan5Count: number = Infinits.range({ end: 10 }).findIndex((element: number) => element > 10);
+```
+
 ## Modifiers
 
 Modifiers provide a way of transforming lists in a [lazy](https://en.wikipedia.org/wiki/Lazy_evaluation) way.
 
 All modifiers are chainable.
 
--   ### `until`
+### `until`
 
 remove all elements after the first one to make a predicate true.
 
@@ -257,7 +271,7 @@ import { Infinits } from 'infinits';
 const upTo1000: Infinits<number> = Infinits.range().until((element: number) => element > 1000);
 ```
 
--   ### `take`
+### `take`
 
 Limit a list to a specific length.
 
@@ -268,7 +282,7 @@ import { Infinits } from 'infinits';
 const take100: Infinits<number> = Infinits.range().take(100);
 ```
 
--   ### `drop`
+### `drop`
 
 Remove the first N elements from a list.
 
@@ -279,7 +293,7 @@ import { Infinits } from 'infinits';
 const drop50: Infinits<number> = Infinits.range({ end: 100 }).drop(50);
 ```
 
--   ### `map`
+### `map`
 
 Basically the same as javascript's [map](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/map).
 
@@ -293,7 +307,7 @@ const double: Infinits<number> = Infinits.range({ end: 5 }).map((x: number) => x
 const digits: Infinits<number> = Infinits.repeat(0, 10).map((x: number, index: number) => index);
 ```
 
--   ### `filter`
+### `filter`
 
 Basically the same as javascript's [filter](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter).
 
@@ -304,7 +318,7 @@ import { Infinits } from 'infinits';
 const evens: Infinits<number> = Infinits.range().map((x: number) => x % 2 === 0);
 ```
 
--   ### `Infinits.zipLong` (static)
+### `Infinits.zipLong` (static)
 
 Takes any number of lists and returns a list of tuples. Nth element in the new list is a tuple made from the Nth element of each list.
 
@@ -333,7 +347,7 @@ const mult5: Infinits<number> = Infinits.range().filter((x: number) => x % 5 ===
 const multipleZip = Infinits.zipLong(mult2, mult3, mult5);
 ```
 
--   ### `Infinits.zipShort` (static)
+### `Infinits.zipShort` (static)
 
 same as [zipLong](#zipLong) but the resulting list's length will be that of the shortest list. Won't produce any holes.
 
@@ -360,7 +374,24 @@ const mult5: Infinits<number> = Infinits.range().filter((x: number) => x % 5 ===
 const multipleZip = Infinits.zipLong(mult2, mult3, mult5);
 ```
 
--   ### `append`
+### `flatten`
+
+Similar to javascript's [flat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat), but only depth 1 (for now!).
+
+If the list isn't a list of lists, it does nothing.
+
+```typescript
+// [[0, 1], [0, 1], [0, 1], ...]
+const deepList: Infinits<Infinits<number>> = Infinits.repeat(Infinits.from([0, 1]), 5);
+
+// [0, 1, 0, 1, 0, 1, ...]
+const shallowList: Infinits<number> = deepList.flatten();
+
+// [0, 1, 0, 1, 0, 1, ...]
+const flattenAgain: Infinits<number> = shallowList.flatten();
+```
+
+### `append`
 
 appends a list to another one. Similar to javascript's [concat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/concat)
 
@@ -374,7 +405,7 @@ const ones: Infinits<number> = Infinits.repeat(1, 5);
 const zerosAndOnes: Infinits<number> = zeros.append(ones);
 ```
 
--   ### `enumerate`
+### `enumerate`
 
 Returns a list of pairs, first element of the pair is the original element, second is the index in the list.
 
@@ -391,7 +422,7 @@ const zeros2: Infinits<[number, number]> = Infinits.repeat(0).map((x: number, i:
 const zeros3: Infinits<[number, number]> = Infinits.zipShort(Infinits.repeat(0), Infinits.range());
 ```
 
--   ### `scan`
+### `scan`
 
 Similar to [reduce](#reduce), but returns a list of every partial result and works lazily.
 
@@ -403,7 +434,7 @@ import { Infinits } from 'infinits';
 const sumFrom0to4: Infinits<number> = Infinits.range().scan((sum, element) => sum + element, 0);
 ```
 
--   ### `inspect`
+### `inspect`
 
 Lazily runs a callback on every item. This means the callback will be executed once the value is consumed.
 
@@ -429,7 +460,7 @@ inspected.forEach((x: number) => console.log(`then logged ${x}`));
  */
 ```
 
--   ### `loop`
+### `loop`
 
 Takes a list and make it circular. This means: when the list ends, start again from the begining.
 
