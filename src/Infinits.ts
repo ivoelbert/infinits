@@ -18,15 +18,18 @@ type MapFunction<A, B> = (elem?: A, index?: number) => B;
 type GeneratorBuilder<T> = () => IterableIterator<T>;
 type ReduceFunction<A, B> = (acc: A, curr: B, index?: number) => A;
 type ScanFunction<A, B> = (state: A, curr: B) => A;
+type SplitFunction<T> = (elem: T) => string;
+type Splitted<T> = { [key: string]: T };
+type SplittedList<T> = Splitted<Infinits<T>>;
 
 /*
-*   This makes me puke. Typescript doesn't fully support recursive types,
-*   So we can't do something like
-*
-*   type BaseInfinits<T> = T extends Infinits<infer R> ? BaseInfinits<R> : T;
-*
-*   We have to settle for this "finite recursion" crap. Depth can't go over 10 :(
-*/
+ *   This makes me puke. Typescript doesn't fully support recursive types,
+ *   So we can't do something like
+ *
+ *   type BaseInfinits<T> = T extends Infinits<infer R> ? BaseInfinits<R> : T;
+ *
+ *   We have to settle for this "finite recursion" crap. Depth can't go over 10 :(
+ */
 type BaseInfinits<T> = T extends Infinits<infer R> ? BI1<R> : T;
 type BI1<T> = T extends Infinits<infer R> ? BI2<R> : T;
 type BI2<T> = T extends Infinits<infer R> ? BI3<R> : T;
@@ -349,7 +352,7 @@ export class Infinits<T> {
         };
 
         return new Infinits<any>(newGen);
-    }
+    };
 
     public append = (list: Infinits<T>): Infinits<T> => {
         const firstPart: IterableIterator<T> = this.generator();
@@ -422,6 +425,33 @@ export class Infinits<T> {
         };
 
         return new Infinits<T>(newGen);
+    };
+
+    public splitBy = (f: SplitFunction<T>): SplittedList<T> => {
+        const execute: GeneratorBuilder<T> = this.generator;
+
+        const splittedLists: SplittedList<T> = {};
+
+        const handler: ProxyHandler<SplittedList<T>> = {
+            get: (obj: SplittedList<T>, key: string) => {
+                // Create the list for that key, in case it doesn't exist yet.
+                if (obj[key] === undefined) {
+                    const newGen = function*(): IterableIterator<T> {
+                        for (const value of execute()) {
+                            if (f(value) === key) {
+                                yield value;
+                            }
+                        }
+                    };
+
+                    obj[key] = new Infinits<T>(newGen);
+                }
+
+                return obj[key];
+            },
+        };
+
+        return new Proxy<SplittedList<T>>(splittedLists, handler);
     };
     /*
      *   END MODIFIERS

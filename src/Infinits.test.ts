@@ -206,3 +206,21 @@ test('deepFlatten very deep list', () => {
 
     expect(deepFlattened.toArray()).toEqual(hopefullyWeGet.toArray());
 });
+
+test('splitBy three keys', () => {
+    const zeroToTwelve = Infinits.range();
+    const residueClasesMod3 = zeroToTwelve.splitBy((n: number) => {
+        switch (n % 3) {
+            case 0:
+                return 'residue0'; // N == 0 (mod 3)
+            case 1:
+                return 'residue1'; // N == 1 (mod 3)
+            case 2:
+                return 'residue2'; // N == 2 (mod 3)
+        }
+    });
+
+    expect(residueClasesMod3.residue0.take(5).toArray()).toEqual([0, 3, 6, 9, 12]);
+    expect(residueClasesMod3.residue1.take(5).toArray()).toEqual([1, 4, 7, 10, 13]);
+    expect(residueClasesMod3.residue2.take(5).toArray()).toEqual([2, 5, 8, 11, 14]);
+});
