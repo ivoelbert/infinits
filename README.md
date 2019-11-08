@@ -497,6 +497,27 @@ import { Infinits } from 'infinits';
 const onesAndZeros = Infinits.from([0, 1]).loop();
 ```
 
+### `splitBy`
+
+Takes a function that returns a key (string) for each element, returns an object that groups elements into multiple lists for each of those keys.
+
+If you take a list from a non-existing key (a key that your function will never return) you won't get any errors, but executions of that list will run forever and not produce a single value :(. This happens cause you can't know in advance all possible keys produced by an infinite list, so we can't assume anything.
+
+```typescript
+import { Infinits } from 'infinits';
+
+// [0, 1, 2, 3, ...]
+const positiveInts: Infinits<number> = Infinits.range();
+
+const evensAndOdds = positiveInts.splitBy((n: number) => n % 2 === 0 ? 'evens' : 'odds');
+
+// [0, 2, 4, 6, 8]
+const evenNumbers = evensAndOdds.evens.take(5);
+
+// [1, 3, 5, 7, 9]
+const oddNumbers = evensAndOdds.odds.take(5);
+```
+
 # TODO:
 
 Improve test coverage, please :(
