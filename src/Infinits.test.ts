@@ -224,3 +224,18 @@ test('splitBy three keys', () => {
     expect(residueClasesMod3.residue1.take(5).toArray()).toEqual([1, 4, 7, 10, 13]);
     expect(residueClasesMod3.residue2.take(5).toArray()).toEqual([2, 5, 8, 11, 14]);
 });
+
+test('splitBy README example', () => {
+    const positiveInts: Infinits<number> = Infinits.range();
+
+    const evensAndOdds = positiveInts.splitBy((n: number) => (n % 2 === 0 ? 'evens' : 'odds'));
+
+    // [0, 2, 4, 6, 8]
+    const evenNumbers = evensAndOdds.evens.take(5);
+
+    // [1, 3, 5, 7, 9]
+    const oddNumbers = evensAndOdds.odds.take(5);
+
+    expect(evenNumbers.toArray()).toEqual([0, 2, 4, 6, 8]);
+    expect(oddNumbers.toArray()).toEqual([1, 3, 5, 7, 9]);
+});
