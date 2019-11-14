@@ -1,3 +1,5 @@
+import { tabulate } from './utils';
+
 export type RangeOptions = {
     start?: number;
     end?: number;
@@ -320,6 +322,19 @@ export class Infinits<T> {
         };
 
         return new Infinits<any>(newGen);
+    };
+
+    static unzip = <TS extends any[]>(list: Infinits<TS>): { [K in keyof TS]: Infinits<TS[K]> } => {
+        const length = list.nth(0).length;
+
+        return tabulate(length, (idx: number) => {
+            const newGen = function*(): IterableIterator<any> {
+                for (const val of list.exec()) {
+                    yield val[idx];
+                }
+            };
+            return new Infinits<any>(newGen);
+        }) as any;
     };
 
     public flatten = (): Infinits<T extends Infinits<infer R> ? R : T> => {

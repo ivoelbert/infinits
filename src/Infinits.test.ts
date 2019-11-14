@@ -33,7 +33,13 @@ test('basic repeat', () => {
 test('enumerate', () => {
     const enumerated = Infinits.repeat(42, 5).enumerate();
 
-    expect(enumerated.toArray()).toEqual([[42, 0], [42, 1], [42, 2], [42, 3], [42, 4]]);
+    expect(enumerated.toArray()).toEqual([
+        [42, 0],
+        [42, 1],
+        [42, 2],
+        [42, 3],
+        [42, 4],
+    ]);
 });
 
 test('scan', () => {
@@ -147,7 +153,12 @@ test('zipLong multiple zip', () => {
 
     const first3 = Infinits.zipLong(three0, three1, three2, someWords);
 
-    expect(first3.toArray()).toEqual([[0, 1, 2, 'yes'], [3, 4, 5, 'yes'], [6, 7, 8, 'yes'], [undefined, undefined, 11, 'yes']]);
+    expect(first3.toArray()).toEqual([
+        [0, 1, 2, 'yes'],
+        [3, 4, 5, 'yes'],
+        [6, 7, 8, 'yes'],
+        [undefined, undefined, 11, 'yes'],
+    ]);
 });
 
 test('zipShort multiple zip', () => {
@@ -164,7 +175,11 @@ test('zipShort multiple zip', () => {
 
     const first3 = Infinits.zipShort(three0, three1, three2, someWords);
 
-    expect(first3.toArray()).toEqual([[0, 1, 2, 'yes'], [3, 4, 5, 'yes'], [6, 7, 8, 'yes']]);
+    expect(first3.toArray()).toEqual([
+        [0, 1, 2, 'yes'],
+        [3, 4, 5, 'yes'],
+        [6, 7, 8, 'yes'],
+    ]);
 });
 
 test('find element', () => {
@@ -183,7 +198,13 @@ test('find index', () => {
 
 test('list of lists', () => {
     const deepList = Infinits.repeat(Infinits.from([0, 1]), 5);
-    expect(deepList.map(list => list.toArray()).toArray()).toEqual([[0, 1], [0, 1], [0, 1], [0, 1], [0, 1]]);
+    expect(deepList.map(list => list.toArray()).toArray()).toEqual([
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+        [0, 1],
+    ]);
 });
 
 test('flatten deep list', () => {
@@ -238,4 +259,12 @@ test('splitBy README example', () => {
 
     expect(evenNumbers.toArray()).toEqual([0, 2, 4, 6, 8]);
     expect(oddNumbers.toArray()).toEqual([1, 3, 5, 7, 9]);
+});
+
+test('basic unzip', () => {
+    const zippedList: Infinits<[number, number]> = Infinits.repeat([0, 1]);
+    const [zeros, ones] = Infinits.unzip(zippedList);
+
+    expect(zeros.take(5).toArray()).toEqual([0, 0, 0, 0, 0]);
+    expect(ones.take(5).toArray()).toEqual([1, 1, 1, 1, 1]);
 });
