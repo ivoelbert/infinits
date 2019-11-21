@@ -374,6 +374,23 @@ const mult5: Infinits<number> = Infinits.range().filter((x: number) => x % 5 ===
 const multipleZip = Infinits.zipLong(mult2, mult3, mult5);
 ```
 
+### `Infinits.unzip` (static)
+
+Takes a list of tuples and returns many lists. Basically the opposite of zipLong.
+
+```typescript
+import { Infinits } from 'infinits';
+
+const evens: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 0);
+const odds: Infinits<number> = Infinits.range().filter((x: number) => x % 2 === 1);
+
+// [ [0, 1], [2, 3], [4, 5], ... ]
+const zippedNumbers = Infinits.zipShort(evens, odds);
+
+// evensAgain == evens, oddsAgain == odds
+const [evensAgain, oddsAgain] = Infinits.unzip(zippedNumbers);
+```
+
 ### `flatten`
 
 Similar to javascript's [flat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/flat), but only depth 1.
